@@ -1,81 +1,138 @@
-import speech_recognition as sr
-import pydub
 import tempfile
 import os
 import streamlit as st
-from gtts import gTTS
-import pygame
 import io
 import base64
 from typing import Optional
 from config import Config
 
+# Optional imports with graceful fallbacks
+try:
+    import speech_recognition as sr
+    SPEECH_RECOGNITION_AVAILABLE = True
+except ImportError:
+    SPEECH_RECOGNITION_AVAILABLE = False
+    sr = None
+
+try:
+    from gtts import gTTS
+    GTTS_AVAILABLE = True
+except ImportError:
+    GTTS_AVAILABLE = False
+    gTTS = None
+
+try:
+    import pydub
+    PYDUB_AVAILABLE = True
+except ImportError:
+    PYDUB_AVAILABLE = False
+    pydub = None
+
+try:
+    import pyaudio
+    PYAUDIO_AVAILABLE = True
+except ImportError:
+    PYAUDIO_AVAILABLE = False
+    pyaudio = None
+
 class VoiceHandler:
     """Handles speech recognition and text-to-speech functionality"""
-    
+
     def __init__(self):
-        self.recognizer = sr.Recognizer()
-        self.microphone = sr.Microphone()
         self.tts_language = Config.TTS_LANGUAGE
         self.recognition_language = Config.SPEECH_RECOGNITION_LANGUAGE
-        
-        # Initialize pygame mixer for audio playback
-        try:
-            pygame.mixer.init()
-        except pygame.error as e:
-            st.warning(f"Audio initialization warning: {e}")
+
+        # Initialize speech recognition if available
+        if SPEECH_RECOGNITION_AVAILABLE:
+            self.recognizer = sr.Recognizer()
+            if PYAUDIO_AVAILABLE:
+                try:
+                    self.microphone = sr.Microphone()
+                except Exception as e:
+                    st.warning(f"Microphone initialization failed: {e}")
+                    self.microphone = None
+            else:
+                self.microphone = None
+        else:
+            self.recognizer = None
+            self.microphone = None
+
+        # Check dependencies and show status
+        self._check_dependencies()
     
+    def _check_dependencies(self):
+        """Check and report dependency status"""
+        missing_deps = []
+
+        if not SPEECH_RECOGNITION_AVAILABLE:
+            missing_deps.append("speech_recognition")
+        if not GTTS_AVAILABLE:
+            missing_deps.append("gtts")
+        if not PYAUDIO_AVAILABLE:
+            missing_deps.append("pyaudio")
+
+        if missing_deps:
+            st.sidebar.warning(f"⚠️ Missing voice dependencies: {', '.join(missing_deps)}")
+            st.sidebar.info("Install with: pip install " + " ".join(missing_deps))
+
     def text_to_speech(self, text: str) -> Optional[str]:
         """Convert text to speech and return audio file path"""
+        if not GTTS_AVAILABLE:
+            st.warning("Text-to-speech not available. Please install gtts: pip install gtts")
+            return None
+
         try:
             # Create TTS object
             tts = gTTS(text=text, lang=self.tts_language, slow=False)
-            
+
             # Save to temporary file
             with tempfile.NamedTemporaryFile(delete=False, suffix='.mp3') as tmp_file:
                 tts.save(tmp_file.name)
                 return tmp_file.name
-                
+
         except Exception as e:
             st.error(f"Error generating speech: {str(e)}")
             return None
     
     def play_audio(self, audio_file_path: str):
-        """Play audio file"""
+        """Play audio file using Streamlit's HTML audio player"""
         try:
-            pygame.mixer.music.load(audio_file_path)
-            pygame.mixer.music.play()
-            
-            # Wait for playback to complete
-            while pygame.mixer.music.get_busy():
-                pygame.time.wait(100)
-                
+            audio_html = self.get_audio_html(audio_file_path)
+            st.markdown(audio_html, unsafe_allow_html=True)
         except Exception as e:
             st.error(f"Error playing audio: {str(e)}")
     
     def speech_to_text(self, audio_data) -> Optional[str]:
         """Convert speech to text using speech recognition"""
+        if not SPEECH_RECOGNITION_AVAILABLE:
+            st.warning("Speech recognition not available. Please install speechrecognition: pip install speechrecognition")
+            return None
+
+        if not self.recognizer:
+            st.warning("Speech recognizer not initialized.")
+            return None
+
         try:
             # Save audio data to temporary file
             with tempfile.NamedTemporaryFile(delete=False, suffix='.wav') as tmp_file:
                 tmp_file.write(audio_data)
                 tmp_file_path = tmp_file.name
-            
+
             # Load audio file
             with sr.AudioFile(tmp_file_path) as source:
                 audio = self.recognizer.record(source)
-            
+
             # Recognize speech
             text = self.recognizer.recognize_google(
-                audio, 
+                audio,
                 language=self.recognition_language
             )
-            
+
             # Clean up temporary file
             os.unlink(tmp_file_path)
-            
+
             return text.strip()
-            
+
         except sr.UnknownValueError:
             st.warning("Could not understand the audio. Please try again.")
             return None

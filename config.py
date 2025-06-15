@@ -33,6 +33,43 @@ class Config:
     def validate_config(cls):
         """Validate that required configuration is present"""
         if not cls.OPENAI_API_KEY:
-            raise ValueError("OPENAI_API_KEY is required. Please set it in your .env file.")
-        
+            print("⚠️  Warning: OPENAI_API_KEY not set. Some features will be limited.")
+            return False
+
         return True
+
+    @classmethod
+    def check_optional_dependencies(cls):
+        """Check for optional dependencies and return availability"""
+        dependencies = {
+            'pyaudio': False,
+            'pygame': False,
+            'speech_recognition': False,
+            'gtts': False
+        }
+
+        try:
+            import pyaudio
+            dependencies['pyaudio'] = True
+        except ImportError:
+            pass
+
+        try:
+            import pygame
+            dependencies['pygame'] = True
+        except ImportError:
+            pass
+
+        try:
+            import speech_recognition
+            dependencies['speech_recognition'] = True
+        except ImportError:
+            pass
+
+        try:
+            import gtts
+            dependencies['gtts'] = True
+        except ImportError:
+            pass
+
+        return dependencies

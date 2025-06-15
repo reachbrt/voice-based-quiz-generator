@@ -7,7 +7,7 @@ from quiz_manager import QuizManager
 from config import Config
 import plotly.express as px
 import plotly.graph_objects as go
-from streamlit_audio_recorder import audio_recorder
+# from streamlit_audio_recorder import audio_recorder  # Optional dependency
 
 # Page configuration
 st.set_page_config(
@@ -176,26 +176,13 @@ def display_question(question, quiz_manager, voice_handler, use_voice, auto_play
                         st.markdown(audio_html, unsafe_allow_html=True)
                         voice_handler.cleanup_temp_files([audio_file])
             
-            # Voice answer recording
-            st.write("Record your answer:")
-            audio_bytes = audio_recorder(
-                text="Click to record",
-                recording_color="#e8b62c",
-                neutral_color="#6aa36f",
-                icon_name="microphone",
-                icon_size="2x"
-            )
-            
-            if audio_bytes:
-                with st.spinner("Processing voice answer..."):
-                    voice_text = voice_handler.speech_to_text(audio_bytes)
-                    if voice_text:
-                        st.write(f"You said: {voice_text}")
-                        parsed_answer = voice_handler.parse_voice_answer(voice_text)
-                        if parsed_answer:
-                            process_answer(parsed_answer, quiz_manager, voice_handler, use_voice)
-                        else:
-                            st.warning("Could not understand your answer. Please try again or use text input.")
+            # Voice answer recording (simplified for demo)
+            st.write("🎤 Voice Recording:")
+            st.info("Voice recording feature requires additional setup. For now, please use the text input below.")
+
+            # Placeholder for future voice recording implementation
+            if st.button("🎤 Record Answer (Coming Soon)"):
+                st.warning("Voice recording will be available after installing additional audio dependencies.")
     
     # Text answer input (always available as backup)
     st.subheader("Text Answer")
