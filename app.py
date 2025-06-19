@@ -63,11 +63,25 @@ def main():
     st.title("🎤 Voice-Based Quiz Generator")
     st.markdown("Upload documents, generate quiz questions, and take voice-based quizzes with immediate feedback!")
     
+    # Ensure session state is initialized
+    if 'quiz_session' not in st.session_state:
+        st.session_state.quiz_session = {
+            'questions': [],
+            'current_question': 0,
+            'answers': [],
+            'scores': [],
+            'start_time': None,
+            'end_time': None,
+            'difficulty': 'medium',
+            'performance_history': [],
+            'session_active': False
+        }
+
     # Check if quiz is active
-    if st.session_state.get('quiz_session', {}).get('session_active', False):
+    if st.session_state.quiz_session.get('session_active', False):
         display_quiz_interface(quiz_manager, voice_handler, use_voice, auto_play)
     else:
-        display_setup_interface(doc_processor, question_generator, quiz_manager, 
+        display_setup_interface(doc_processor, question_generator, quiz_manager,
                                num_questions, difficulty, topic_focus)
 
 def display_setup_interface(doc_processor, question_generator, quiz_manager, 

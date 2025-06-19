@@ -1,6 +1,6 @@
 # Voice-Based Quiz Generator Makefile
 
-.PHONY: help install setup test demo run clean
+.PHONY: help install setup test demo run clean test-all organize
 
 # Default target
 help:
@@ -11,9 +11,11 @@ help:
 	@echo "  make install    - Install dependencies"
 	@echo "  make setup      - Run full setup (install + configure)"
 	@echo "  make test       - Test installation"
+	@echo "  make test-all   - Run all tests in tests/ directory"
 	@echo "  make demo       - Run demo without full setup"
 	@echo "  make run        - Run the Streamlit application"
 	@echo "  make clean      - Clean temporary files"
+	@echo "  make organize   - Organize project structure"
 	@echo "  make help       - Show this help message"
 
 # Install dependencies
@@ -32,12 +34,26 @@ setup:
 # Test installation
 test:
 	@echo "Testing installation..."
-	python test_installation.py
+	python tests/test_installation.py
+
+# Run all tests
+test-all:
+	@echo "Running all tests..."
+	python tests/test_installation.py
+	python tests/verify_setup.py
+	python tests/quick_test.py
+	@echo "All tests completed!"
 
 # Run demo
 demo:
 	@echo "Running demo..."
-	python demo.py
+	python examples/demo.py
+
+# Organize project structure
+organize:
+	@echo "Organizing project structure..."
+	mkdir -p docs tests examples scripts assets
+	@echo "Project structure organized!"
 
 # Run the application
 run:

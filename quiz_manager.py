@@ -7,12 +7,12 @@ import json
 
 class QuizManager:
     """Manages quiz sessions, scoring, and performance tracking"""
-    
+
     def __init__(self):
-        self.reset_session()
+        self.initialize_session_state()
     
-    def reset_session(self):
-        """Reset quiz session data"""
+    def initialize_session_state(self):
+        """Initialize session state if not exists"""
         if 'quiz_session' not in st.session_state:
             st.session_state.quiz_session = {
                 'questions': [],
@@ -25,9 +25,27 @@ class QuizManager:
                 'performance_history': [],
                 'session_active': False
             }
+
+    def reset_session(self):
+        """Reset quiz session data"""
+        st.session_state.quiz_session = {
+            'questions': [],
+            'current_question': 0,
+            'answers': [],
+            'scores': [],
+            'start_time': None,
+            'end_time': None,
+            'difficulty': 'medium',
+            'performance_history': [],
+            'session_active': False
+        }
     
     def start_quiz(self, questions: List[Dict], difficulty: str = 'medium'):
         """Start a new quiz session"""
+        # Ensure session state exists
+        if 'quiz_session' not in st.session_state:
+            self.initialize_session_state()
+
         st.session_state.quiz_session.update({
             'questions': questions,
             'current_question': 0,
@@ -41,19 +59,33 @@ class QuizManager:
     
     def get_current_question(self) -> Optional[Dict]:
         """Get the current question"""
-        session = st.session_state.quiz_session
-        if (session['session_active'] and 
-            session['current_question'] < len(session['questions'])):
-            return session['questions'][session['current_question']]
-        return None
+        try:
+            # Ensure session state is initialized
+            self.initialize_session_state()
+
+            session = st.session_state.quiz_session
+            if (session['session_active'] and
+                session['current_question'] < len(session['questions'])):
+                return session['questions'][session['current_question']]
+            return None
+        except Exception as e:
+            st.error(f"Error getting current question: {str(e)}")
+            return None
     
     def submit_answer(self, user_answer: str, time_taken: float = 0) -> Dict:
         """Submit an answer and get feedback"""
-        session = st.session_state.quiz_session
-        current_q = self.get_current_question()
-        
-        if not current_q:
-            return {'error': 'No active question'}
+        try:
+            # Ensure session state is initialized
+            self.initialize_session_state()
+
+            session = st.session_state.quiz_session
+            current_q = self.get_current_question()
+
+            if not current_q:
+                return {'error': 'No active question'}
+        except Exception as e:
+            st.error(f"Error in submit_answer: {str(e)}")
+            return {'error': f'Session error: {str(e)}'}
         
         correct_answer = current_q['correct_answer']
         is_correct = user_answer.upper() == correct_answer.upper()
@@ -105,6 +137,9 @@ class QuizManager:
     
     def get_quiz_progress(self) -> Dict:
         """Get current quiz progress"""
+        # Ensure session state is initialized
+        self.initialize_session_state()
+
         session = st.session_state.quiz_session
         total_questions = len(session['questions'])
         current = session['current_question']
@@ -118,8 +153,11 @@ class QuizManager:
     
     def get_session_stats(self) -> Dict:
         """Get comprehensive session statistics"""
+        # Ensure session state is initialized
+        self.initialize_session_state()
+
         session = st.session_state.quiz_session
-        
+
         if not session['answers']:
             return {'no_data': True}
         

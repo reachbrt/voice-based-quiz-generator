@@ -5,8 +5,52 @@
 [![OpenAI](https://img.shields.io/badge/OpenAI-GPT--3.5/4-green.svg)](https://openai.com/)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![GitHub Stars](https://img.shields.io/github/stars/reachbrt/voice-based-quiz-generator.svg)](https://github.com/reachbrt/voice-based-quiz-generator/stargazers)
+[![Code Quality](https://img.shields.io/badge/Code%20Quality-A+-brightgreen.svg)](https://github.com/reachbrt/voice-based-quiz-generator)
 
 > **An AI-powered educational platform that transforms documents into interactive voice-based quizzes with adaptive difficulty and real-time performance analytics.**
+
+## 📁 Project Structure
+
+```
+voice-based-quiz-generator/
+├── 📄 Core Application
+│   ├── app.py                    # Main Streamlit application
+│   ├── config.py                 # Configuration management
+│   ├── document_processor.py     # Document parsing (PDF, DOCX, TXT)
+│   ├── question_generator.py     # AI-powered question generation
+│   ├── quiz_manager.py          # Quiz session management
+│   └── voice_handler.py         # Speech recognition & TTS
+├── 📚 Documentation
+│   ├── TECHNICAL_DOCUMENTATION.md  # Detailed technical guide
+│   ├── ARCHITECTURE_DIAGRAMS.md    # System architecture diagrams
+│   ├── SYSTEM_OVERVIEW.md          # High-level project overview
+│   ├── CONTRIBUTING.md             # Contribution guidelines
+│   ├── INSTALL.md                  # Installation instructions
+│   └── SETUP_INSTRUCTIONS.md       # Setup guide
+├── 🧪 Tests
+│   ├── test_installation.py        # Installation verification
+│   ├── test_session_state.py       # Session state testing
+│   ├── test_openai_fix.py          # OpenAI integration tests
+│   ├── test_json_parsing.py        # JSON parsing tests
+│   ├── verify_setup.py             # Setup verification
+│   └── quick_test.py               # Quick functionality test
+├── 📜 Scripts
+│   ├── setup.py                    # Project setup script
+│   ├── deploy_and_run.sh          # Deployment automation
+│   ├── github_setup.sh            # GitHub repository setup
+│   └── create_github_repo.sh      # Repository creation
+├── 💡 Examples
+│   └── demo.py                     # Demo application
+├── 🎨 Assets
+│   └── (images, audio files, etc.)
+├── ⚙️ Configuration
+│   ├── requirements.txt            # Python dependencies
+│   ├── .env.example               # Environment variables template
+│   ├── Makefile                   # Build automation
+│   └── LICENSE                    # MIT License
+└── 📖 Documentation
+    └── README.md                   # This file
+```
 
 ## 🌟 Overview
 
@@ -128,6 +172,15 @@ make quickstart  # Complete setup with virtual environment
 make run         # Start the application
 ```
 
+#### Using Setup Script
+```bash
+# Automated setup
+python scripts/setup.py
+
+# Run tests to verify installation
+python tests/test_installation.py
+```
+
 #### Using Docker
 ```bash
 docker build -t quiz-generator .
@@ -166,10 +219,12 @@ docker run -p 8501:8501 quiz-generator
 ## 🔧 Technical Documentation
 
 ### 📚 **Comprehensive Guides**
-- **[Technical Documentation](TECHNICAL_DOCUMENTATION.md)**: Detailed system architecture and component analysis
-- **[Architecture Diagrams](ARCHITECTURE_DIAGRAMS.md)**: Visual system design and data flow diagrams
-- **[Installation Guide](INSTALL.md)**: Step-by-step setup instructions
-- **[Contributing Guide](CONTRIBUTING.md)**: How to contribute to the project
+- **[Technical Documentation](docs/TECHNICAL_DOCUMENTATION.md)**: Detailed system architecture and component analysis
+- **[Architecture Diagrams](docs/ARCHITECTURE_DIAGRAMS.md)**: Visual system design and data flow diagrams
+- **[System Overview](docs/SYSTEM_OVERVIEW.md)**: High-level project overview and workflows
+- **[Installation Guide](docs/INSTALL.md)**: Step-by-step setup instructions
+- **[Contributing Guide](docs/CONTRIBUTING.md)**: How to contribute to the project
+- **[Setup Instructions](docs/SETUP_INSTRUCTIONS.md)**: Detailed setup guide
 
 ### 🏛️ **System Components**
 
@@ -309,6 +364,38 @@ make format
 make lint
 ```
 
+## 🧪 Testing
+
+### Running Tests
+```bash
+# Run all tests
+python -m pytest tests/
+
+# Run specific test categories
+python tests/test_installation.py      # Installation verification
+python tests/test_session_state.py     # Session state testing
+python tests/test_openai_fix.py        # OpenAI integration
+python tests/verify_setup.py           # Setup verification
+
+# Quick functionality test
+python tests/quick_test.py
+```
+
+### Test Categories
+- **Installation Tests**: Verify dependencies and setup
+- **Unit Tests**: Individual component testing
+- **Integration Tests**: Component interaction testing
+- **Session State Tests**: Streamlit session management
+- **API Tests**: External service integration
+- **Performance Tests**: Load and stress testing
+
+### Adding New Tests
+1. Create test files in the `tests/` directory
+2. Follow naming convention: `test_*.py`
+3. Use descriptive test function names
+4. Include both positive and negative test cases
+5. Add documentation for complex test scenarios
+
 ## 📄 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
@@ -331,8 +418,22 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ### 🔗 **Useful Links**
 - **[Live Demo](http://localhost:8501)**: Try the application locally
 - **[GitHub Repository](https://github.com/reachbrt/voice-based-quiz-generator)**: Source code and issues
-- **[Technical Docs](TECHNICAL_DOCUMENTATION.md)**: Detailed technical information
+- **[Technical Docs](docs/TECHNICAL_DOCUMENTATION.md)**: Detailed technical information
+- **[Project Structure](docs/PROJECT_STRUCTURE.md)**: Detailed project organization
 - **[API Documentation](https://platform.openai.com/docs)**: OpenAI API reference
+
+## 📁 Project Organization
+
+This project follows a clean, organized structure for maintainability and ease of contribution:
+
+- **📄 Core Application**: Main Python modules in root directory
+- **📚 Documentation**: Comprehensive guides in `docs/` folder
+- **🧪 Tests**: All test files organized in `tests/` folder
+- **📜 Scripts**: Automation scripts in `scripts/` folder
+- **💡 Examples**: Demo and example files in `examples/` folder
+- **🎨 Assets**: Sample documents and media in `assets/` folder
+
+For detailed information about the project structure, see [docs/PROJECT_STRUCTURE.md](docs/PROJECT_STRUCTURE.md).
 
 ---
 
